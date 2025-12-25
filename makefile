@@ -13,6 +13,10 @@ install:
 build:
 	@go build -ldflags "-X main.Version=$(VERSION)" -o $(BINARY_NAME) .
 
+
+run:
+	@./$(BINARY_NAME)
+
 # 3. Cleanup
 clean:
 	@if exist $(BINARY_NAME) del $(BINARY_NAME)
