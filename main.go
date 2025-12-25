@@ -61,11 +61,28 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+		case "esc":
+			if m.createFileInputVisible {
+				m.createFileInputVisible = false
+			}
+			if m.currentFile != nil {
+				m.noteTextArea.SetValue("")
+				m.currentFile = nil
+			}
+
+			if m.showingList {
+				if m.list.FilterState() == list.Filtering {
+					break
+				}
+				m.showingList = false
+			}
+			return m, nil
 		case "ctrl+l":
+			noteList := listFiles()
+			m.list.SetItems(noteList)
 			m.showingList = true
 			return m, nil
 		case "ctrl+n":
-			// handle new file input
 			m.createFileInputVisible = true
 			return m, nil
 
@@ -101,6 +118,29 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "enter":
 			if m.currentFile != nil {
 				break
+			}
+
+			if m.showingList {
+				selectedItem, ok := m.list.SelectedItem().(item)
+				if ok {
+					filepath := fmt.Sprintf("%s/%s", vaultDir, selectedItem.title)
+					content, err := os.ReadFile(filepath)
+					if err != nil {
+						log.Printf("Error reading file %s: %v", filepath, err)
+						return m, nil
+					}
+					m.noteTextArea.SetValue(string(content))
+
+					f, rr := os.OpenFile(filepath, os.O_RDWR, 0644)
+					if rr != nil {
+						log.Printf("Error opening file %s: %v", filepath, rr)
+						return m, nil
+					}
+					m.currentFile = f
+					m.showingList = false
+				}
+
+				return m, nil
 			}
 
 			// todo : create file
@@ -153,7 +193,7 @@ func (m model) View() string {
 		Foreground(lipgloss.Color("250"))
 
 	welcome := welcomeStyle.Render("Welcome to Gotion! 🧠")
-	helpKeys := helpKeysStyle.Render("Ctrl+N: new file | Ctrl+L: list | Esc: back/save | Ctrl+S: save | Ctrl+C/Q: quit")
+	helpKeys := helpKeysStyle.Render("Ctrl+N: new file | Ctrl+L: list | Esc: back | Ctrl+S: save | Ctrl+C/Q: quit")
 
 	view := ""
 	if m.createFileInputVisible {
