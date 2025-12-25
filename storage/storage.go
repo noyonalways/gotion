@@ -39,3 +39,10 @@ func ListFiles() ([]os.DirEntry, error) {
 	}
 	return os.ReadDir(VaultDir)
 }
+
+func DeleteNote(filename string) error {
+	if VaultDir == "" {
+		Init()
+	}
+	return os.Remove(fmt.Sprintf("%s/%s", VaultDir, filename))
+}

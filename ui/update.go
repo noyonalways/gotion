@@ -47,6 +47,21 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.createFileInputVisible = true
 			return m, nil
 
+		case "ctrl+d":
+			if m.showingList {
+				selectedItem, ok := m.list.SelectedItem().(item)
+				if ok {
+					err := storage.DeleteNote(selectedItem.title)
+					if err != nil {
+						log.Printf("Error deleting file: %v", err)
+					}
+					// Refresh the list
+					noteList := getNoteList()
+					m.list.SetItems(noteList)
+				}
+			}
+			return m, nil
+
 		case "ctrl+s":
 			// text are value -> write in it that file descriptor and close it
 			if m.currentFile == nil {

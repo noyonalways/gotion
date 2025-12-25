@@ -4,7 +4,12 @@ import "fmt"
 
 func (m Model) View() string {
 	welcome := WelcomeStyle.Render("Welcome to Gotion! 🧠")
-	helpKeys := HelpKeysStyle.Render("Ctrl+N: new file | Ctrl+L: list | Esc: back | Ctrl+S: save | Ctrl+C/Q: quit")
+
+	helpText := "Ctrl+N: new file | Ctrl+L: list | Esc: back | Ctrl+S: save | Ctrl+C/Q: quit"
+	if m.showingList {
+		helpText = "Enter: open | Ctrl+D: delete | Esc: back | Ctrl+N: new | Ctrl+C/Q: quit"
+	}
+	helpKeys := HelpKeysStyle.Render(helpText)
 
 	view := ""
 	if m.createFileInputVisible {
