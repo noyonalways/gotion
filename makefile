@@ -14,7 +14,7 @@ build:
 	@go build -ldflags "-X main.Version=$(VERSION)" -o $(BINARY_NAME) .
 
 
-run:
+run: build
 	@./$(BINARY_NAME)
 
 # 3. Cleanup
