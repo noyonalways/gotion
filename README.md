@@ -1,7 +1,6 @@
-### Add some improvements 
 
-- Separate the code in different files
-- Add the delete note functionality
+# Gotion
+**Gotion** is a lightweight CLI tool that lets you create, list, and manage notes directly from your terminal. It stores everything locally and is perfect for quick note-taking without leaving your command line.
 
 
 
