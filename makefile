@@ -1,15 +1,19 @@
-# Get the binary name from the current directory name
 BINARY_NAME=gotion.exe
+# Gets the tag, or the short hash if no tag exists. 
+# Adds '-dirty' if you have uncommitted changes.
+VERSION=$$(git describe --tags --always --dirty)
 
 # Local build
 build:
-	@go build -o $(BINARY_NAME) .
+	@go build -ldflags "-X main.Version=$(VERSION)" -o $(BINARY_NAME) .
 
 # The "Proper" Go installation
-# This will place the binary in %GOPATH%\bin (usually C:\Users\YourName\go\bin)
-install:
-	@go install .
-	@echo "Application installed to Go bin directory."
+install: build
+	@go install -ldflags "-X main.Version=$(VERSION)" .
+	@echo "--------------------------------------------"
+	@echo "Successfully installed gotion $(VERSION)"
+	@echo "Run 'gotion --version' to verify"
+	@echo "--------------------------------------------"
 
 # Run locally for testing
 run: build

@@ -9,15 +9,15 @@ import (
 	"github.com/noyonalways/gotion/ui"
 )
 
-const Version = "1.0.0" // Increment this when you update
+// Changed from 'const' to 'var' so ldflags can overwrite it
+var Version = "dev"
 
 func main() {
-	if len(os.Args) > 1 && os.Args[1] == "--version" {
+	if len(os.Args) > 1 && (os.Args[1] == "--version" || os.Args[1] == "-v") {
 		fmt.Printf("gotion version: %s\n", Version)
 		return
 	}
 
-	// Initialize storage (creates vault directory if needed)
 	storage.Init()
 
 	p := tea.NewProgram(ui.NewModel())
