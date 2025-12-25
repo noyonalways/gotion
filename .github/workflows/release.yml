@@ -1,32 +1,37 @@
-name: release
+name: Release
 
 on:
   push:
     tags:
-      - 'v*' # Trigger only when you push a tag like v1.0.0
+      - 'v*' # This triggers the build whenever you push a tag like v1.0.0
 
 permissions:
-  contents: write # Important: Allows the action to create the release
+  contents: write # Needed to upload files to the Release page
 
 jobs:
-  goreleaser:
-    runs-on: ubuntu-latest
+  build:
+    runs-on: windows-latest # Uses a Windows machine to build
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.25.5' # Your Go version
+          go-version: '1.25.5' # Match your Go version
 
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
+      - name: Build Windows Executable
+        run: |
+          # Get the version from the git tag
+          $VERSION = git describe --tags --always
+          # Build the .exe with the version injected
+          go build -ldflags "-X main.Version=$VERSION" -o gotion.exe .
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
         with:
-          distribution: goreleaser
-          version: latest
-          args: release --clean
+          files: gotion.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
