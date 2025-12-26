@@ -18,6 +18,7 @@ type Model struct {
 	currentFile            *os.File
 	list                   list.Model
 	showingList            bool
+	exportMessage          string
 }
 
 func (m Model) Init() tea.Cmd {
@@ -54,6 +55,7 @@ func NewModel() Model {
 		createFileInputVisible: false,
 		list:                   finalList,
 		showingList:            false,
+		exportMessage:          "",
 	}
 }
 

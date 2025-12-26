@@ -37,6 +37,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 				m.showingList = false
 			}
+			m.exportMessage = ""
 			return m, nil
 		case "ctrl+l":
 			noteList := getNoteList()
@@ -59,6 +60,16 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					noteList := getNoteList()
 					m.list.SetItems(noteList)
 				}
+			}
+			return m, nil
+
+		case "ctrl+e":
+			exportDir, err := storage.ExportNotes()
+			if err != nil {
+				log.Printf("Error exporting notes: %v", err)
+				m.exportMessage = fmt.Sprintf("✗ Error exporting notes: %v", err)
+			} else {
+				m.exportMessage = fmt.Sprintf("✓ Notes exported to: %s", exportDir)
 			}
 			return m, nil
 

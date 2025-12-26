@@ -5,9 +5,9 @@ import "fmt"
 func (m Model) View() string {
 	welcome := WelcomeStyle.Render("Welcome to Gotion! 🧠")
 
-	helpText := "Ctrl+N: new file | Ctrl+L: list | Esc: back | Ctrl+S: save | Ctrl+C/Q: quit"
+	helpText := "Ctrl+N: new file | Ctrl+L: list | Esc: back | Ctrl+S: save | Ctrl+E: export | Ctrl+C/Q: quit"
 	if m.showingList {
-		helpText = "Enter: open | Ctrl+D: delete | Esc: back | Ctrl+N: new | Ctrl+C/Q: quit"
+		helpText = "Enter: open | Ctrl+D: delete | Esc: back | Ctrl+N: new | Ctrl+E: export | Ctrl+C/Q: quit"
 	}
 	helpKeys := HelpKeysStyle.Render(helpText)
 
@@ -25,5 +25,10 @@ func (m Model) View() string {
 		view = m.list.View()
 	}
 
-	return fmt.Sprintf("\n%s\n\n%s\n\n%s", welcome, view, helpKeys)
+	exportMsg := ""
+	if m.exportMessage != "" {
+		exportMsg = fmt.Sprintf("\n%s", m.exportMessage)
+	}
+
+	return fmt.Sprintf("\n%s\n\n%s\n\n%s%s", welcome, view, helpKeys, exportMsg)
 }

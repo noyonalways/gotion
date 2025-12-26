@@ -46,3 +46,45 @@ func DeleteNote(filename string) error {
 	}
 	return os.Remove(fmt.Sprintf("%s/%s", VaultDir, filename))
 }
+
+func ExportNotes() (string, error) {
+	if VaultDir == "" {
+		Init()
+	}
+
+	files, err := ListFiles()
+	if err != nil {
+		return "", err
+	}
+
+	currentDir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	exportDir := fmt.Sprintf("%s/gotion-notes", currentDir)
+
+	err = os.MkdirAll(exportDir, 0750)
+	if err != nil {
+		return "", err
+	}
+
+	for _, file := range files {
+		if !file.IsDir() {
+			sourceFile := fmt.Sprintf("%s/%s", VaultDir, file.Name())
+			destFile := fmt.Sprintf("%s/%s", exportDir, file.Name())
+
+			content, err := os.ReadFile(sourceFile)
+			if err != nil {
+				return "", err
+			}
+
+			err = os.WriteFile(destFile, content, 0644)
+			if err != nil {
+				return "", err
+			}
+		}
+	}
+
+	return exportDir, nil
+}
